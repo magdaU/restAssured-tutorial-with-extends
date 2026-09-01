@@ -43,7 +43,7 @@ jobs:
           fi
 
       - name: Run tests
-        run: mvn "-Dtest=VideoGameTests,VideoGameNegativeTests,VideoGameParameterizedTests,VideoGameNegativeParameterizedTests,GpathJSONTest,GpathXMLTests,MyFirstVideoGame" test
+        run: mvn "-Dtest=VideoGameTests,VideoGameNegativeTests,VideoGameParameterizedTests,VideoGameNegativeParameterizedTests,GpathJSONTest,GpathXMLTests,MyFirstVideoGame,FootballNegativeTests" test
 
       - name: Add Allure environment and categories
         run: cp allure-config/environment.properties allure-config/categories.json target/allure-results/
