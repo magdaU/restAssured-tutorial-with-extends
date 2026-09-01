@@ -12,9 +12,21 @@ The project demonstrates a layered approach to API test automation against publi
 
 ---
 
+## 🔍 Start Here (for reviewers)
+
+Short on time? These best show the range of technique in this project:
+
+- [`VideoGameNegativeParameterizedTests`](src/test/java/config/VideoGameNegativeParameterizedTests.java) — boundary value analysis (`0`, `-1`, `99999`, `Integer.MAX_VALUE`) combined with parameterized JUnit runs
+- [`FootballNegativeTests`](src/test/java/config/FootballNegativeTests.java) — negative auth testing (invalid token) against a live third-party API
+- [`VideoGameTests`](src/test/java/config/VideoGameTests.java) — JSON Schema + XSD contract validation on the same endpoint
+- [TEST_STRATEGY.md](TEST_STRATEGY.md) — the reasoning behind what's tested, how, and what's deliberately out of scope
+
+---
+
 ## 🎯 What This Project Demonstrates
 
 - **API testing** — functional, negative, and boundary-value/parameterized testing (CRUD, status codes, response fields, response time)
+- **Negative & auth testing** — invalid IDs, malformed bodies, and an invalid auth token, each asserted against its distinct expected failure mode
 - **Contract validation** — JSON Schema and XSD validation against live responses
 - **Query & data** — JsonPath/XmlPath/GPath querying, POJO (de)serialization with Jackson
 - **Non-functional testing** — k6 load testing with an SLA-aligned latency threshold
@@ -60,7 +72,7 @@ performance/
 
 **Video Game DB** — `https://videogamedb.uk/api/v2/` ([Swagger](https://videogamedb.uk/swagger-ui/index.html)). Public, read-only sandbox — writes are accepted but never persisted. Covered by `VideoGameTests`, `VideoGameNegativeTests`, `VideoGameParameterizedTests`, `VideoGameNegativeParameterizedTests`, `GpathJSONTest`, `GpathXMLTests` — CRUD, JSON Schema/XSD validation, POJO (de)serialization, GPath querying, negative and parameterized cases.
 
-**Football Data** — `https://api.football-data.org/v4/` ([docs](https://www.football-data.org/)). Requires a free API token; without one, `FootbalTests` returns HTTP 403. Free tier is rate-limited to 10 requests/minute.
+**Football Data** — `https://api.football-data.org/v4/` ([docs](https://www.football-data.org/)). Requires a free API token; without one, `FootbalTests` returns HTTP 403. Free tier is rate-limited to 10 requests/minute. `FootballNegativeTests` supplies its own invalid token and needs no setup — it runs in CI on every push.
 
 ```powershell
 $env:FOOTBALL_DATA_API_TOKEN="your-token"
@@ -96,10 +108,11 @@ k6 run performance/videogame-load-test.js
 | `VideoGameParameterizedTests` | 5 | ✅ | None |
 | `VideoGameNegativeParameterizedTests` | 4 | ✅ | None |
 | `FootbalTests` | 12 | ⚠️ | HTTP 403 (no token), 429 (rate limit), 500 (transient) |
+| `FootballNegativeTests` | 1 | ✅ | None (needs no token) |
 | `GpathJSONTest` | 5 | ✅ | None |
 | `GpathXMLTests` | 5 | ✅ | None |
 | `MyFirstVideoGame` | 2 | ✅ | None |
-| **Total** | **51** | | |
+| **Total** | **52** | | |
 
 ---
 
@@ -137,6 +150,7 @@ The k6 load test runs on manual trigger only (`Actions → k6 Load Test → Run 
 | 10 | Allure historical trend — `history/` preserved between CI runs |
 | 11 | k6 performance/load testing for VideoGame DB API |
 | 12 | Allure report Environment and Categories widgets |
+| 13 | Negative auth test (invalid token) for Football API, runnable without a real token — added to CI |
 
 ---
 
